@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jordan Dashboard — Connexion Google</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#FBF8F2;color:#2C2A26;margin:0;padding:26px;text-align:center}
+.card{max-width:560px;margin:20px auto;background:#fff;border:1px solid #EEE8DC;border-radius:18px;padding:22px}
+h1{font-family:Georgia,serif;font-size:22px;margin:0 0 8px}
+p{color:#615C52;font-size:15px;line-height:1.5}
+.code{font-family:monospace;font-size:15px;word-break:break-all;background:#F6F0E5;border-radius:12px;padding:14px;margin:16px 0;border:1px solid #E4DCCB}
+button{background:#BD9A52;color:#fff;border:none;border-radius:12px;padding:14px 22px;font-size:16px;font-weight:600;cursor:pointer}
+.ok{color:#5C7853;font-weight:600;margin-top:12px;display:none}
+.err{color:#A56A5C}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Connexion Google réussie</h1>
+<p id="msg">Copie ce code, reviens dans l'app <b>Jordan Dashboard</b> et colle-le dans le champ « Code Google ».</p>
+<div class="code" id="code">…</div>
+<button id="cp">Copier le code</button>
+<div class="ok" id="done">Copié ✓ — retourne dans Jordan Dashboard et colle-le.</div>
+</div>
+<script>
+function val(){
+  var p=new URLSearchParams(location.search);
+  var c=p.get('code'); if(c) return c;
+  var h=new URLSearchParams((location.hash||'').replace(/^#/,''));
+  if(h.get('access_token')) return 'TOKEN:'+h.get('access_token');
+  return p.get('error')||h.get('error')||'';
+}
+var v=val(), el=document.getElementById('code'), msg=document.getElementById('msg');
+if(!v){el.textContent='(aucun code reçu)';msg.textContent="Ouvre cette page via le bouton « Connecter Google » de l'app.";msg.className='err';}
+else{el.textContent=v;}
+document.getElementById('cp').addEventListener('click',function(){
+  try{navigator.clipboard&&navigator.clipboard.writeText(v);}catch(e){}
+  var t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();
+  try{document.execCommand('copy');}catch(e){}
+  t.remove();
+  document.getElementById('done').style.display='block';
+});
+</script>
+</body>
+</html>
